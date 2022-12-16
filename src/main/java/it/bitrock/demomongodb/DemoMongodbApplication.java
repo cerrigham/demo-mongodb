@@ -40,11 +40,11 @@ public class DemoMongodbApplication {//implements CommandLineRunner {
 
 		MongoCursor<Document> cursor = iterable.iterator(); // (2)
 		try {
-			while(cursor.hasNext()) {
+			while (cursor.hasNext()) {
 				System.out.println(cursor.next());
-				}
+			}
 		} finally {
 			cursor.close();
 		}
-
+	}
 }
