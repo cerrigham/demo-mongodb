@@ -34,8 +34,6 @@ public class QuickStartPojoExample {
                 cursor.close();
             }
 
-            Movie movie = collection.find(eq("title", "Back to the Future")).first();
-            System.out.println(movie);
         }
     }
 }

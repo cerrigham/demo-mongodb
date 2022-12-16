@@ -21,4 +21,5 @@ public class Movie {
     public String toString() {
         return "Movie [\n plot=" + plot + ",\n  genres=" + genres + ",\n  title=" + title + ",\n]";
     }
+    
 }
