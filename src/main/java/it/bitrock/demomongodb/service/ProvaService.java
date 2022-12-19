@@ -4,6 +4,7 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.*;
 import it.bitrock.demomongodb.model.Movie;
+import it.bitrock.demomongodb.model.Prova;
 import it.bitrock.demomongodb.repository.MovieRepository;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -18,12 +19,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
-import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Filters.eq;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Service
-public class MovieService {
+public class ProvaService {
 
     @Autowired
     MovieRepository movieRepository;
@@ -45,41 +46,27 @@ public class MovieService {
         return MongoClients.create(settings);
     }
 
-    private MongoCollection<Movie> getMongoCollection(){
+    private MongoCollection<Prova> getMongoCollection(){
         CodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
         CodecRegistry pojoCodecRegistry = fromRegistries(getDefaultCodecRegistry(), fromProviders(pojoCodecProvider));
-        MongoDatabase database = init().getDatabase("sample_mflix").withCodecRegistry(pojoCodecRegistry);
-        MongoCollection<Movie> collection = database.getCollection("movies", Movie.class);
+        MongoDatabase database = init().getDatabase("fede").withCodecRegistry(pojoCodecRegistry);
+        MongoCollection<Prova> collection = database.getCollection("prova", Prova.class);
         return collection;
     }
 
     @Deprecated
-    public ResponseEntity<?> findAllMovie(){
-        FindIterable<Movie> iterable = getMongoCollection().find(); // (1)
-        MongoCursor<Movie> cursor = iterable.iterator(); // (2)
-        List<Movie> movies = new ArrayList<>();
+    public ResponseEntity<?> findAll(){
+        FindIterable<Prova> iterable = getMongoCollection().find(); // (1)
+        MongoCursor<Prova> cursor = iterable.iterator(); // (2)
+        List<Prova> prove = new ArrayList<>();
         try {
             while(cursor.hasNext()) {
-                movies.add(cursor.next());
+                prove.add(cursor.next());
             }
-            return ResponseEntity.ok(movies);
+            return ResponseEntity.ok(prove);
         } finally {
             cursor.close();
         }
-    }
-
-    public ResponseEntity<?> findByTitle(String title){
-        if(movieRepository.existsByTitle(title)) {
-            Movie movie = getMongoCollection().find(eq("title", title)).first();
-            return ResponseEntity.ok(movie);
-        } else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-
-    public ResponseEntity<?> findByCountry(String country){
-//        find({$and: [{countries : "Italy"},{languages: "Italian"}]})
-//        List<Movie> movies = getMongoCollection().find(and(() -> "Italian")
-                return ResponseEntity.ok(null);
     }
 
 }

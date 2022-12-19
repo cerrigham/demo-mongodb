@@ -15,6 +15,8 @@ public class Movie {
     private ObjectId objectId;
     private String plot;
     private List<String> genres;
+    private List<String> languages;
+    private List<String> countries;
     private String title;
 
     @Override

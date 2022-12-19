@@ -7,4 +7,9 @@ import java.util.List;
 
 public interface MovieRepository extends MongoRepository<Movie, String> {
 
+    Boolean existsByTitle(String title);
+    Boolean existsByCountries(String title);
+    Boolean existsByLanguages(String title);
+
+
 }
