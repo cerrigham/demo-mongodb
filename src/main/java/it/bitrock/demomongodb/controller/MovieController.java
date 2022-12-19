@@ -28,7 +28,7 @@ public class MovieController {
         return ResponseEntity.ok(movieRepository.findAll(page));
     }
 
-    @GetMapping("/get_by_id")
+    @GetMapping("/getById")
     public ResponseEntity<?> getById(@RequestParam String id){
         return ResponseEntity.ok(movieRepository.findById(id).orElseGet(null));
     }
@@ -38,13 +38,20 @@ public class MovieController {
         return ResponseEntity.ok(movieService.findAllMovie());
     }
 
-    @GetMapping("/get_by_title")
-    public ResponseEntity<?> getByTitle(String title){
+    @GetMapping("/getByTitle")
+    public ResponseEntity<?> getByTitle(@RequestParam String title){
         return ResponseEntity.ok(movieService.findByTitle(title));
     }
 
+    @GetMapping("/getByLanguage")
+    public ResponseEntity<?> getByCountry(@RequestParam String country){
+        return ResponseEntity.ok(movieService.findByCountry(country));
+    }
 
-
+    @GetMapping("/getByPlot")
+    public ResponseEntity<?> getByPlot(@RequestParam String plot){
+        return ResponseEntity.ok(movieService.findByPlot(plot));
+    }
 
 
 }

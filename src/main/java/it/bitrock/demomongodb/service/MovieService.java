@@ -77,9 +77,12 @@ public class MovieService {
     }
 
     public ResponseEntity<?> findByCountry(String country){
-//        find({$and: [{countries : "Italy"},{languages: "Italian"}]})
-//        List<Movie> movies = getMongoCollection().find(and(() -> "Italian")
-                return ResponseEntity.ok(null);
+        FindIterable<Movie> movies = getMongoCollection().find(eq("countries", country)).limit(20);
+        return ResponseEntity.ok(movies);
+    }
+
+    public ResponseEntity<?> findByPlot(String plot){
+        return ResponseEntity.ok(movieRepository.findByPlotContains(plot));
     }
 
 }
