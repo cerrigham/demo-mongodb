@@ -1,5 +1,6 @@
 package it.bitrock.demomongodb.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.types.ObjectId;
@@ -12,12 +13,13 @@ import java.util.List;
 @Setter
 @Document("movies")
 public class Movie {
-    private ObjectId objectId;
+    private String id;
+    private String title;
     private String plot;
     private List<String> genres;
     private List<String> languages;
     private List<String> countries;
-    private String title;
+    private String type;
 
     @Override
     public String toString() {
