@@ -13,7 +13,8 @@ import java.util.List;
 @Setter
 @Document("movies")
 public class Movie {
-    private String id;
+
+    private ObjectId id;
     private String title;
     private String plot;
     private List<String> genres;

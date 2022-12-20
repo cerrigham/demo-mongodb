@@ -10,6 +10,7 @@ import it.bitrock.demomongodb.repository.MovieRepository;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -120,8 +121,9 @@ public class MovieService {
         return ResponseEntity.ok("Movie Added");
     }
 
-    public ResponseEntity<?> updateMovie(String movieId, String filedName, Object fieldValue){
-        if(movieRepository.existsById(movieId)) {
+    public ResponseEntity<?> updateMovie(ObjectId movieId, String filedName, Object fieldValue){
+        String id = String.valueOf(movieId);
+        if(movieRepository.existsById(id)) {
             if (movieRepository.partialUpdate(movieId,
                     filedName, fieldValue)) {
                 return ResponseEntity.ok("Update Movie id: " + movieId +
