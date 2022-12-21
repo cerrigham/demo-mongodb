@@ -9,16 +9,20 @@ import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.BasicUpdate;
 import org.springframework.data.mongodb.core.query.Criteria;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CustomMovieRepositoryImpl implements CustomMovieRepository {
+
+    List<Movie> count = new ArrayList();
 
     @Autowired
     MongoTemplate mongoTemplate;
 
     @Override
-    public boolean partialUpdate(ObjectId movieId, String fieldName, Object fieldValue) {
-        mongoTemplate.findAndModify(BasicQuery.query(Criteria.where("id").is(movieId)),
+    public void partialUpdate(ObjectId movieId, String fieldName, Object fieldValue) {
+      mongoTemplate.findAndModify(BasicQuery.query(Criteria.where("id").is(movieId)),
                 BasicUpdate.update(fieldName, fieldValue), FindAndModifyOptions.none(), Movie.class);
-        return true;
     }
 
 }

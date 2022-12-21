@@ -2,27 +2,17 @@ package it.bitrock.demomongodb.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.bitrock.demomongodb.dto.InsertMovieDTO;
-import it.bitrock.demomongodb.dto.UpdateMovieDTO;
 import it.bitrock.demomongodb.model.Movie;
 import it.bitrock.demomongodb.repository.MovieRepository;
 import it.bitrock.demomongodb.service.MovieService;
-import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.webjars.NotFoundException;
 
-import javax.websocket.server.PathParam;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Objects;
-
+@Slf4j
 @RequestMapping("/movie")
 @Tag(name = "Movie Controller" , description = "Manage movie via MongoDB")
 @RestController
@@ -41,12 +31,12 @@ public class MovieController {
 
     @GetMapping("/getById")
     public ResponseEntity<?> getById(@RequestParam String id){
-        return ResponseEntity.ok(movieRepository.findById(id).orElseGet(null));
+        return movieService.getById(id);
     }
 
     @GetMapping("/getAllServ")
     public ResponseEntity<?> getAllMovie(@RequestParam int limit){
-        return movieService.findAllMovie(limit);
+        return movieService.getAllMovie(limit);
     }
 
     @GetMapping("/getByTitle")
@@ -74,26 +64,21 @@ public class MovieController {
         return movieService.findByPlot(plot, limit);
     }
 
-    @PostMapping(value = "/insert", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/insert", consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> insertMovie(@RequestBody InsertMovieDTO insertMovieDTO){
         return movieService.insertMovie(insertMovieDTO);
     }
 
+    //TODO cos'è il PatchMapping?
     @PatchMapping("/update")
     public ResponseEntity<?> updateMovie(@RequestBody Movie movie) throws Exception {
-        for(Field field : Movie.class.getDeclaredFields()){
-            String fieldName = field.getName();
-            if(fieldName.equals("id")){
-                continue;
-            }
-            final Method getter = Movie.class.getDeclaredMethod("get"+ StringUtils.capitalize(fieldName));
-            final Object fieldValue = getter.invoke(movie);
-            if(Objects.nonNull(fieldValue)){
+        return movieService.updateMovie(movie);
+    }
 
-                return movieService.updateMovie(movie.getId(), fieldName, fieldValue);
-            }
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteMovie(@PathVariable("id") String id){
+        return movieService.delete(id);
     }
 
 

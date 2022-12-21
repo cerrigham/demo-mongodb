@@ -4,6 +4,6 @@ import org.bson.types.ObjectId;
 
 public interface CustomMovieRepository {
 
-    boolean partialUpdate(final ObjectId movieId, final String fieldName, final Object fieldValue);
+    void partialUpdate(final ObjectId movieId, final String fieldName, final Object fieldValue);
 
 }
