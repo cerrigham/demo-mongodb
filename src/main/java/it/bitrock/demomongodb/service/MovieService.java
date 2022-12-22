@@ -85,7 +85,7 @@ public class MovieService {
         }
     }
 
-    public ResponseEntity<?> findByTitle(String title){
+    public ResponseEntity<?> getByTitle(String title){
         if(movieRepository.existsByTitleAllIgnoreCaseContains(title)) {
 //            Movie movie = getMovieCollection().find(eq("title", title)).first();
             return ResponseEntity.ok(movieRepository.findByTitleAllIgnoreCaseContains(title));
@@ -93,7 +93,7 @@ public class MovieService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    public ResponseEntity<?> findByCountry(String country, int limit){
+    public ResponseEntity<?> getByCountry(String country, int limit){
         if(movieRepository.existsByCountriesAllIgnoreCaseContains(country)) {
 //            FindIterable<Movie> movies = getMovieCollection().find(eq("countries", country)).limit(limit);
             List<Movie> movies = movieRepository.findByIgnoreCaseCountriesContaining(country)
@@ -103,7 +103,7 @@ public class MovieService {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    public ResponseEntity<?> findByLanguage(String language, int limit){
+    public ResponseEntity<?> getByLanguage(String language, int limit){
         if(movieRepository.existsByAllIgnoreCaseLanguages(language)) {
 //            FindIterable<Movie> movies = getMovieCollection().find(eq("languages", language)).limit(limit);
             List<Movie> movies = movieRepository.findByLanguagesAllIgnoreCase(language)
@@ -113,20 +113,26 @@ public class MovieService {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    public ResponseEntity<?> findByPlot(String plot, int limit){
+    public ResponseEntity<?> getByPlot(String plot, int limit){
         if(movieRepository.existsByPlotAllIgnoreCaseContains(plot)) {
             return ResponseEntity.ok(movieRepository.findByPlotAllIgnoreCaseContains(plot).stream().limit(limit));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    public ResponseEntity<?> findByTitleAndCountry(String title, String country){
+    public ResponseEntity<?> getByTitleAndCountry(String title, String country){
         if(movieRepository.existsByTitleContains(title) &&
                 movieRepository.existsByCountriesAllIgnoreCaseContains(country)) {
             return ResponseEntity.ok(movieRepository
                     .findByTitleContainsAndCountriesAllIgnoreCaseContains(title, country));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    public ResponseEntity<?> getSomeField(int limit, String... field){
+        if(field != null) {
+            return ResponseEntity.ok(movieRepository.getSomeField(limit, field));
+        } return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     public ResponseEntity<?> insertMovie(InsertMovieDTO insertMovieDTO){
@@ -141,7 +147,7 @@ public class MovieService {
         String id = String.valueOf(movie.getId());
         log.info(id);
         String movieUpdate = "Update Movie id: " + id +"-";
-        String mod = "";
+        String stringField = "";
         if(movieRepository.existsById(id)) {
             for (Field field : Movie.class.getDeclaredFields()) {
                 String fieldName = field.getName();
@@ -153,15 +159,15 @@ public class MovieService {
                 if (Objects.nonNull(fieldValue)) {
                     log.info("field : " + fieldName);
                     movieRepository.partialUpdate(movie.getId(), fieldName, fieldValue);
-                    mod += " field: \"" + fieldName + "\", with value: \"" + fieldValue + "\" -";
+                    stringField = " field: \"" + fieldName + "\", with value: \"" + fieldValue + "\" -";
                 }
             }
-            return ResponseEntity.ok(movieUpdate + mod);
+            return ResponseEntity.ok(movieUpdate + stringField);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    public ResponseEntity<?> delete(String id){
+    public ResponseEntity<?> deleteMovie(String id){
         if(movieRepository.existsById(id)) {
             Optional<Movie> movie = movieRepository.findById(id);
             List<String> title = movie.stream().map(m -> m.getTitle()).collect(Collectors.toList());

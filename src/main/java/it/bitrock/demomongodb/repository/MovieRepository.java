@@ -2,12 +2,15 @@ package it.bitrock.demomongodb.repository;
 
 import it.bitrock.demomongodb.model.Movie;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface MovieRepository extends MongoRepository<Movie, String>, CustomMovieRepository{
 
+    @Query(value="{}", fields="{title : 1, _id : 0}")
+    List<Movie> findTitleAndExcludeId();
     Boolean existsByTitle(String title);
     Boolean existsByTitleContains(String title);
     Boolean existsByTitleAllIgnoreCaseContains(String title);

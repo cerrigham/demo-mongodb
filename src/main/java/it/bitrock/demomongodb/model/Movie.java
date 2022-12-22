@@ -14,6 +14,7 @@ import java.util.List;
 @Document("movies")
 public class Movie {
 
+    @Id
     @Schema(name = "id", example = "insert_id")
     private ObjectId id;
     private String title;

@@ -41,27 +41,32 @@ public class MovieController {
 
     @GetMapping("/getByTitle")
     public ResponseEntity<?> getByTitle(@RequestParam String title){
-        return movieService.findByTitle(title);
+        return movieService.getByTitle(title);
     }
 
     @GetMapping("/getByTitleAndCountry")
     public ResponseEntity<?> getByTitleAndCountry(@RequestParam String title, @RequestParam String country){
-        return movieService.findByTitleAndCountry(title, country);
+        return movieService.getByTitleAndCountry(title, country);
     }
 
     @GetMapping("/getByCountry/{limit}")
     public ResponseEntity<?> getByCountry(@RequestParam String country, @PathVariable("limit") int limit){
-        return movieService.findByCountry(country, limit);
+        return movieService.getByCountry(country, limit);
     }
 
     @GetMapping("/getByLanguage")
     public ResponseEntity<?> getByLanguage(@RequestParam String language, @RequestParam int limit){
-        return movieService.findByLanguage(language, limit);
+        return movieService.getByLanguage(language, limit);
     }
 
     @GetMapping("/getByPlot")
     public ResponseEntity<?> getByPlot(@RequestParam String plot, @RequestParam int limit){
-        return movieService.findByPlot(plot, limit);
+        return movieService.getByPlot(plot, limit);
+    }
+
+    @GetMapping("/getMovieField")
+    public ResponseEntity<?> getSomeMovieFields(@RequestParam int limit, @RequestParam String... field){
+        return movieService.getSomeField(limit, field);
     }
 
     @PostMapping(value = "/insert", consumes = {MediaType.APPLICATION_JSON_VALUE},
@@ -78,7 +83,7 @@ public class MovieController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteMovie(@PathVariable("id") String id){
-        return movieService.delete(id);
+        return movieService.deleteMovie(id);
     }
 
 
