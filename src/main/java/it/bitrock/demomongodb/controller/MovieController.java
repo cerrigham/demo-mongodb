@@ -3,6 +3,7 @@ package it.bitrock.demomongodb.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.bitrock.demomongodb.dto.InsertMovieDTO;
 import it.bitrock.demomongodb.model.Movie;
+import it.bitrock.demomongodb.repository.CustomMovieRepositoryImpl;
 import it.bitrock.demomongodb.repository.MovieRepository;
 import it.bitrock.demomongodb.service.MovieService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
+
 @Slf4j
 @RequestMapping("/movie")
 @Tag(name = "Movie Controller" , description = "Manage movie via MongoDB")
@@ -20,6 +23,9 @@ public class MovieController {
 
     @Autowired
     MovieRepository movieRepository;
+
+    @Autowired
+    CustomMovieRepositoryImpl customMovieRepository;
 
     @Autowired
     MovieService movieService;
@@ -64,9 +70,27 @@ public class MovieController {
         return movieService.getByPlot(plot, limit);
     }
 
+    @GetMapping("/test")
+    public ResponseEntity<?> test(){
+        return ResponseEntity.ok(customMovieRepository.testAgg());
+    }
+
+    @GetMapping("/getByRuntimeMinMax")
+    public ResponseEntity<?> getByRuntimeMinMax(@RequestParam int limit){
+        return ResponseEntity.ok(customMovieRepository.aggregationRuntimeMinMax(limit));
+    }
+
     @GetMapping("/getMovieField")
     public ResponseEntity<?> getSomeMovieFields(@RequestParam int limit, @RequestParam String... field){
         return movieService.getSomeField(limit, field);
+    }
+
+    //TODO CERCARE DI CAPIRE PERCHE' NON PRENDE LE @REQUESTBODY
+    @GetMapping("/getByRuntime")
+    public ResponseEntity<?> getByRuntime(@RequestParam int limit,
+                                          @RequestParam(name = "Runtime Greater Then") int runtimeGt){
+        log.info(limit + " " + runtimeGt);
+        return movieService.getAggregationMovieRuntime(limit, runtimeGt);
     }
 
     @PostMapping(value = "/insert", consumes = {MediaType.APPLICATION_JSON_VALUE},

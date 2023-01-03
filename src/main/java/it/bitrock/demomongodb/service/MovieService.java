@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -135,6 +132,15 @@ public class MovieService {
         } return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    public ResponseEntity<?> getAggregationMovieRuntime(int limit, int runtimeGt){
+
+//        boolean fieldNotNull = Arrays.stream(aggregateRuntimeMovieDTO.getFields()).allMatch(f -> Objects.nonNull(f));
+        if(limit != 0) {
+            return ResponseEntity.ok(movieRepository.aggregationMovieRuntimeGreaterThan(limit, runtimeGt));
+        } else
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     public ResponseEntity<?> insertMovie(InsertMovieDTO insertMovieDTO){
         Movie movie = new Movie();
         BeanUtils.copyProperties(insertMovieDTO, movie);
@@ -145,7 +151,6 @@ public class MovieService {
 
     public ResponseEntity<?> updateMovie(Movie movie) throws Exception{
         String id = String.valueOf(movie.getId());
-        log.info(id);
         String movieUpdate = "Update Movie id: " + id +"-";
         String stringField = "";
         if(movieRepository.existsById(id)) {

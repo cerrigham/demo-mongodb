@@ -1,7 +1,10 @@
 package it.bitrock.demomongodb.repository;
 
+import it.bitrock.demomongodb.dto.aggregate.AggregateMovieRuntimeDTO;
+import it.bitrock.demomongodb.dto.aggregate.AggregateMovieRuntimeMinMaxDTO;
+import it.bitrock.demomongodb.dto.aggregate.AggregateTestDTO;
 import it.bitrock.demomongodb.model.Movie;
-import org.bson.Document;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
+@Slf4j
 public class CustomMovieRepositoryImpl implements CustomMovieRepository {
 
     List<Movie> count = new ArrayList();
@@ -35,22 +39,37 @@ public class CustomMovieRepositoryImpl implements CustomMovieRepository {
     @Override
     public List<Movie> getSomeField(int limit, String... field){
         Query query = new Query();
-            query.fields().include(field).exclude("id");
-        return mongoTemplate.find(query, Movie.class).stream().limit(limit).collect(Collectors.toList());
+        query.fields().include(field).exclude("id");
+        List<Movie> movieList = mongoTemplate.find(query, Movie.class).stream().limit(limit).collect(Collectors.toList());
+        //TODO TOGLIERE I PARAMETRI NULL
+//        movieList.stream().
+        return movieList;
     }
 
-    //TODO ADATTARE
-    public AggregationResults<Movie> aggregationOne(){
-        GroupOperation groupByContriesAndSumPop = group("countries")
-                .sum("pop").as("statePop");
-        MatchOperation filterStates = match(new Criteria("statePop").gt(10000000));
-        SortOperation sortByPopDesc = sort(Sort.by(Sort.Direction.DESC, "statePop"));
+    @Override
+    public List<?> testAgg(){
+        AggregationOperation group = Aggregation.group("rated").count().as("count");
+        AggregationOperation project = Aggregation.project("count").and("rated").previousOperation();
+        Aggregation aggregation = Aggregation.newAggregation(group, project);
+        List<AggregateTestDTO> aggregateRuntimeDTOs =
+                mongoTemplate.aggregate(aggregation, mongoTemplate.getCollectionName(Movie.class),
+                        AggregateTestDTO.class).getMappedResults();
+        return aggregateRuntimeDTOs.stream().collect(Collectors.toList());
+    }
 
-        Aggregation aggregation = newAggregation(
-                groupByContriesAndSumPop, filterStates, sortByPopDesc);
-        AggregationResults<Movie> result = mongoTemplate.aggregate(
-                aggregation, "zips", Movie.class);
-        return result;
+    //TODO FUNZIONA
+    @Override
+    public List<?> aggregationMovieRuntimeGreaterThan(int limit, int runtimeGt){
+//        GroupOperation groupByCountriesAndSumPop = group("runtime")
+//                .sum("runtime").as("runtime");
+        MatchOperation filter = match(new Criteria("runtime").gt(runtimeGt));
+        SortOperation sortByDesc = sort(Sort.by(Sort.Direction.DESC, "runtime"));
+
+        Aggregation aggregation = Aggregation.newAggregation(filter, sortByDesc);
+        List<AggregateMovieRuntimeDTO> result = mongoTemplate.aggregate(
+                aggregation, mongoTemplate.getCollectionName(Movie.class),
+                AggregateMovieRuntimeDTO.class).getMappedResults();
+        return result.stream().limit(limit).collect(Collectors.toList());
     }
 
     //TODO ADATTARE
@@ -76,19 +95,21 @@ public class CustomMovieRepositoryImpl implements CustomMovieRepository {
     }
 
     //TODO ADATTARE
-    public Document aggregationThree(){
-        GroupOperation sumZips = group("state").count().as("zipCount");
-        SortOperation sortByCount = sort(Sort.Direction.ASC, "zipCount");
-        GroupOperation groupFirstAndLast = group().first("_id").as("minZipState")
-                .first("zipCount").as("minZipCount").last("_id").as("maxZipState")
-                .last("zipCount").as("maxZipCount");
+    @Override
+    public List<?> aggregationRuntimeMinMax(int limit){
+        List<?> movie;
+//        GroupOperation sumZips = group("runtime").count().as("runtimeCount");
+        SortOperation sortByCount = sort(Sort.Direction.ASC, "runtimeCount");
+        GroupOperation groupFirstAndLast = group().first("_id").as("minRuntime")
+                .first("runtimeCount").as("minRuntime").last("_id").as("maxRuntime")
+                .last("runtimeCount").as("maxRuntime");
 
-        Aggregation aggregation = newAggregation(sumZips, sortByCount, groupFirstAndLast);
+        Aggregation aggregation = newAggregation(sortByCount, groupFirstAndLast);
 
-        AggregationResults<Document> result = mongoTemplate
-                .aggregate(aggregation, "zips", Document.class);
-        Document document= result.getUniqueMappedResult();
-        return document;
+        List<AggregateMovieRuntimeMinMaxDTO> result = mongoTemplate
+                .aggregate(aggregation, mongoTemplate.getCollectionName(Movie.class),
+                        AggregateMovieRuntimeMinMaxDTO.class).getMappedResults();
+        return movie = result.stream().limit(limit).collect(Collectors.toList());
     }
 
 
