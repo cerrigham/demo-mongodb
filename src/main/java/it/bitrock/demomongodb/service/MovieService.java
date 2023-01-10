@@ -3,9 +3,9 @@ package it.bitrock.demomongodb.service;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.*;
-import it.bitrock.demomongodb.dto.InsertMovieDTO;
+import it.bitrock.demomongodb.dto.movie.InsertMovieDTO;
 import it.bitrock.demomongodb.model.Movie;
-import it.bitrock.demomongodb.repository.MovieRepository;
+import it.bitrock.demomongodb.repository.movie.MovieRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.codecs.configuration.CodecProvider;
@@ -132,7 +132,7 @@ public class MovieService {
         } return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    public ResponseEntity<?> getAggregationMovieRuntime(int limit, int runtimeGt){
+    public ResponseEntity<?> getAggregationMovieRuntimeGraterThan(int limit, int runtimeGt){
 
 //        boolean fieldNotNull = Arrays.stream(aggregateRuntimeMovieDTO.getFields()).allMatch(f -> Objects.nonNull(f));
         if(limit != 0) {

@@ -1,4 +1,4 @@
-package it.bitrock.demomongodb.dto;
+package it.bitrock.demomongodb.dto.movie;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,9 @@
-package it.bitrock.demomongodb.dto.aggregate;
+package it.bitrock.demomongodb.dto.movie.aggregate;
 
 import lombok.*;
 import org.bson.types.ObjectId;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -10,13 +11,15 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AggregateMovieRuntimeMinMaxDTO {
+public class AggregateMovieRuntimeDTO {
 
    private ObjectId id;
    private String title;
    private List<String> genres;
    private Long runtime;
-   private int minRuntime;
-   private int maxRuntime;
+   private List<String> languages;
+   private List<String> countries;
+   private Object year;
+   private String type;
 
 }

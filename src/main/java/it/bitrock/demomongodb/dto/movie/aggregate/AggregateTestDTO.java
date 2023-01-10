@@ -1,4 +1,4 @@
-package it.bitrock.demomongodb.dto.aggregate;
+package it.bitrock.demomongodb.dto.movie.aggregate;
 
 import lombok.*;
 

@@ -1,10 +1,10 @@
 package it.bitrock.demomongodb.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import it.bitrock.demomongodb.dto.InsertMovieDTO;
+import it.bitrock.demomongodb.dto.movie.InsertMovieDTO;
 import it.bitrock.demomongodb.model.Movie;
-import it.bitrock.demomongodb.repository.CustomMovieRepositoryImpl;
-import it.bitrock.demomongodb.repository.MovieRepository;
+import it.bitrock.demomongodb.repository.movie.CustomMovieRepositoryImpl;
+import it.bitrock.demomongodb.repository.movie.MovieRepository;
 import it.bitrock.demomongodb.service.MovieService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.websocket.server.PathParam;
 
 @Slf4j
 @RequestMapping("/movie")
@@ -76,8 +74,8 @@ public class MovieController {
     }
 
     @GetMapping("/getByRuntimeMinMax")
-    public ResponseEntity<?> getByRuntimeMinMax(@RequestParam int limit){
-        return ResponseEntity.ok(customMovieRepository.aggregationRuntimeMinMax(limit));
+    public ResponseEntity<?> getByRuntimeMinMax(){
+        return ResponseEntity.ok(customMovieRepository.aggregationRuntimeMinMax());
     }
 
     @GetMapping("/getMovieField")
@@ -86,11 +84,11 @@ public class MovieController {
     }
 
     //TODO CERCARE DI CAPIRE PERCHE' NON PRENDE LE @REQUESTBODY
-    @GetMapping("/getByRuntime")
+    @GetMapping("/getByRuntimeGraterThan")
     public ResponseEntity<?> getByRuntime(@RequestParam int limit,
                                           @RequestParam(name = "Runtime Greater Then") int runtimeGt){
         log.info(limit + " " + runtimeGt);
-        return movieService.getAggregationMovieRuntime(limit, runtimeGt);
+        return movieService.getAggregationMovieRuntimeGraterThan(limit, runtimeGt);
     }
 
     @PostMapping(value = "/insert", consumes = {MediaType.APPLICATION_JSON_VALUE},

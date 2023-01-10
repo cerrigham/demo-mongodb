@@ -1,4 +1,4 @@
-package it.bitrock.demomongodb.repository;
+package it.bitrock.demomongodb.repository.movie;
 
 import it.bitrock.demomongodb.model.Movie;
 import org.springframework.data.mongodb.repository.MongoRepository;

@@ -1,8 +1,8 @@
-package it.bitrock.demomongodb.repository;
+package it.bitrock.demomongodb.repository.movie;
 
-import it.bitrock.demomongodb.dto.aggregate.AggregateMovieRuntimeDTO;
-import it.bitrock.demomongodb.dto.aggregate.AggregateMovieRuntimeMinMaxDTO;
-import it.bitrock.demomongodb.dto.aggregate.AggregateTestDTO;
+import it.bitrock.demomongodb.dto.movie.aggregate.AggregateMovieRuntimeDTO;
+import it.bitrock.demomongodb.dto.movie.aggregate.AggregateMovieRuntimeMinMaxDTO;
+import it.bitrock.demomongodb.dto.movie.aggregate.AggregateTestDTO;
 import it.bitrock.demomongodb.model.Movie;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -37,12 +37,21 @@ public class CustomMovieRepositoryImpl implements CustomMovieRepository {
     }
 
     @Override
-    public List<Movie> getSomeField(int limit, String... field){
-        Query query = new Query();
-        query.fields().include(field).exclude("id");
-        List<Movie> movieList = mongoTemplate.find(query, Movie.class).stream().limit(limit).collect(Collectors.toList());
+    public List<Movie> getSomeField(int limit, String... fields){
         //TODO TOGLIERE I PARAMETRI NULL
-//        movieList.stream().
+        Movie movie = null;
+//        for(String campo : fields) {
+//            for (Field field : movie.getClass().getFields()) {
+//                if (!field.getName().equals(campo)) {
+//                    continue;
+//                }
+//            }
+//        }
+        Query query = new Query();
+        query.fields().include(fields).exclude("id");
+        List<Movie> movieList = mongoTemplate.find(query, Movie.class)
+                .stream().limit(limit).collect(Collectors.toList());
+
         return movieList;
     }
 
@@ -60,7 +69,7 @@ public class CustomMovieRepositoryImpl implements CustomMovieRepository {
     //TODO FUNZIONA
     @Override
     public List<?> aggregationMovieRuntimeGreaterThan(int limit, int runtimeGt){
-//        GroupOperation groupByCountriesAndSumPop = group("runtime")
+//        GroupOperation groupBy = group("runtime")
 //                .sum("runtime").as("runtime");
         MatchOperation filter = match(new Criteria("runtime").gt(runtimeGt));
         SortOperation sortByDesc = sort(Sort.by(Sort.Direction.DESC, "runtime"));
@@ -70,6 +79,27 @@ public class CustomMovieRepositoryImpl implements CustomMovieRepository {
                 aggregation, mongoTemplate.getCollectionName(Movie.class),
                 AggregateMovieRuntimeDTO.class).getMappedResults();
         return result.stream().limit(limit).collect(Collectors.toList());
+    }
+
+    //TODO FUNZIONA
+    @Override
+    public List<?> aggregationRuntimeMinMax(){
+        List<?> movie;
+        MatchOperation filter = match(new Criteria("runtime").gt(100));
+        /*Il sort no riesce a gestire un alto quantitativo di valori e va in errore,
+         * per questo ho dovuto impostare un gt minimo per escludere un pò di valori
+         */
+        SortOperation sortBy = sort(Sort.Direction.ASC, "runtime");
+        GroupOperation groupFirstAndLast = group().first("_id").as("minRuntime")
+                .first("runtime").as("minRuntime").last("_id").as("maxRuntime")
+                .last("runtime").as("maxRuntime");
+
+        Aggregation aggregation = newAggregation(filter, sortBy, groupFirstAndLast);
+
+        List<AggregateMovieRuntimeMinMaxDTO> result = mongoTemplate
+                .aggregate(aggregation, mongoTemplate.getCollectionName(Movie.class),
+                        AggregateMovieRuntimeMinMaxDTO.class).getMappedResults();
+        return movie = result;
     }
 
     //TODO ADATTARE
@@ -93,25 +123,6 @@ public class CustomMovieRepositoryImpl implements CustomMovieRepository {
         Movie smallestState = result.getUniqueMappedResult();
         return smallestState;
     }
-
-    //TODO ADATTARE
-    @Override
-    public List<?> aggregationRuntimeMinMax(int limit){
-        List<?> movie;
-//        GroupOperation sumZips = group("runtime").count().as("runtimeCount");
-        SortOperation sortByCount = sort(Sort.Direction.ASC, "runtimeCount");
-        GroupOperation groupFirstAndLast = group().first("_id").as("minRuntime")
-                .first("runtimeCount").as("minRuntime").last("_id").as("maxRuntime")
-                .last("runtimeCount").as("maxRuntime");
-
-        Aggregation aggregation = newAggregation(sortByCount, groupFirstAndLast);
-
-        List<AggregateMovieRuntimeMinMaxDTO> result = mongoTemplate
-                .aggregate(aggregation, mongoTemplate.getCollectionName(Movie.class),
-                        AggregateMovieRuntimeMinMaxDTO.class).getMappedResults();
-        return movie = result.stream().limit(limit).collect(Collectors.toList());
-    }
-
 
 
 }

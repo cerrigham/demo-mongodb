@@ -1,18 +1,10 @@
 package it.bitrock.demomongodb;
 
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.*;
-import it.bitrock.demomongodb.repository.MovieRepository;
-import org.bson.Document;
+import it.bitrock.demomongodb.repository.movie.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @EnableMongoRepositories
