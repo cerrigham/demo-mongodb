@@ -1,8 +1,8 @@
 package it.bitrock.demomongodb.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import it.bitrock.demomongodb.dto.sales.SalesDTO;
-import it.bitrock.demomongodb.service.SalesService;
+import it.bitrock.demomongodb.dto.sales.SaleDTO;
+import it.bitrock.demomongodb.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class SalesController {
 
     @Autowired
-    SalesService provaService;
+    SaleService provaService;
 
 
     @GetMapping("/prova")
@@ -22,7 +22,7 @@ public class SalesController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> add(@RequestBody SalesDTO provaDTO){
+    public ResponseEntity<?> add(@RequestBody SaleDTO provaDTO){
 //        return provaService.add(provaDTO);
         return null;
     }

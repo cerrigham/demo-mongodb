@@ -1,7 +1,7 @@
 package it.bitrock.demomongodb.repository.movie;
 
 import it.bitrock.demomongodb.dto.movie.aggregate.AggregateMovieRuntimeDTO;
-import it.bitrock.demomongodb.dto.movie.aggregate.AggregateMovieRuntimeMinMaxDTO;
+import it.bitrock.demomongodb.dto.movie.aggregate.AggregateMinMaxDTO;
 import it.bitrock.demomongodb.dto.movie.aggregate.AggregateTestDTO;
 import it.bitrock.demomongodb.model.Movie;
 import lombok.extern.slf4j.Slf4j;
@@ -96,9 +96,9 @@ public class CustomMovieRepositoryImpl implements CustomMovieRepository {
 
         Aggregation aggregation = newAggregation(filter, sortBy, groupFirstAndLast);
 
-        List<AggregateMovieRuntimeMinMaxDTO> result = mongoTemplate
+        List<AggregateMinMaxDTO> result = mongoTemplate
                 .aggregate(aggregation, mongoTemplate.getCollectionName(Movie.class),
-                        AggregateMovieRuntimeMinMaxDTO.class).getMappedResults();
+                        AggregateMinMaxDTO.class).getMappedResults();
         return movie = result;
     }
 

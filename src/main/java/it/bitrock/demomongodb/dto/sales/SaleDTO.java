@@ -9,7 +9,7 @@ import org.bson.types.ObjectId;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SalesDTO {
+public class SaleDTO {
 
     @Schema(hidden = true)
     private ObjectId objectId;

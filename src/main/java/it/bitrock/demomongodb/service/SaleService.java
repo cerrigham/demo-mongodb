@@ -3,7 +3,7 @@ package it.bitrock.demomongodb.service;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.*;
-import it.bitrock.demomongodb.model.Sales;
+import it.bitrock.demomongodb.model.Sale;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -20,7 +20,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Service
-public class SalesService {
+public class SaleService {
 
     private MongoClient init(){
         // Replace the uri string with your MongoDB deployment's connection string
@@ -40,19 +40,19 @@ public class SalesService {
         return MongoClients.create(settings);
     }
 
-    private MongoCollection<Sales> getSuppliesCollection(){
+    private MongoCollection<Sale> getSuppliesCollection(){
         CodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
         CodecRegistry pojoCodecRegistry = fromRegistries(getDefaultCodecRegistry(), fromProviders(pojoCodecProvider));
         MongoDatabase database = init().getDatabase("sample_supplies").withCodecRegistry(pojoCodecRegistry);
-        MongoCollection<Sales> collection = database.getCollection("sales", Sales.class);
+        MongoCollection<Sale> collection = database.getCollection("sales", Sale.class);
         return collection;
     }
 
     @Deprecated
     public ResponseEntity<?> findAll(){
-        FindIterable<Sales> iterable = getSuppliesCollection().find(); // (1)
-        MongoCursor<Sales> cursor = iterable.iterator(); // (2)
-        List<Sales> prove = new ArrayList<>();
+        FindIterable<Sale> iterable = getSuppliesCollection().find(); // (1)
+        MongoCursor<Sale> cursor = iterable.iterator(); // (2)
+        List<Sale> prove = new ArrayList<>();
         try {
             while(cursor.hasNext()) {
                 prove.add(cursor.next());

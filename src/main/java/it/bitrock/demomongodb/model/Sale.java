@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Document("prova")
-public class Sales {
+public class Sale {
 
     private ObjectId objectId;
     private LocalDateTime saleDate;
